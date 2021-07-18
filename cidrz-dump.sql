@@ -186,17 +186,11 @@ SELECT
 		ELSE '-'
 	END AS "Sex"
 FROM
-	DICTESTS DT
-INNER JOIN TESTS T ON
-	T.TESTID = DT.TESTID
-INNER JOIN REQUESTS R ON
-	R.REQUESTID = T.REQUESTID
-INNER JOIN DICFACILITIES DF ON
-	DF.FACID = R.FACILITYID
-INNER JOIN DICDOCTORS DD ON
-	DD.DOCID = R.DOCTORID
-INNER JOIN PATIENTS P ON
-	P.PATID = R.PATIENTID
+	DICTESTS DT INNER JOIN TESTS T ON T.TESTID = DT.TESTID
+INNER JOIN REQUESTS R ON R.REQUESTID = T.REQUESTID
+INNER JOIN DICFACILITIES DF ON DF.FACID = R.FACILITYID
+INNER JOIN DICDOCTORS DD ON DD.DOCID = R.DOCTORID
+INNER JOIN PATIENTS P ON P.PATID = R.PATIENTID
 WHERE
 	YEAR(R.RECEIVEDDATE) = '2018';
 
@@ -222,7 +216,7 @@ FROM
 			-- Female
 			AND CAST(ROUND(DATEDIFF(DAY, P.DOB, GETDATE()) / 365.2425, 2) AS DECIMAL(10, 2)) < 18
 			-- 365.2425 is the mean num of days in a calendar year for the last 400 years
- THEN DT.TESTPRICE / 2
+				THEN DT.TESTPRICE / 2
 			ELSE DT.TESTPRICE
 		END AS TotalAmount,
 		DT.TESTCODE AS TestCode
@@ -244,4 +238,104 @@ GROUP BY
 Question 3A
 Write a query which displays the 3rd most popular test at the lab. 
 */
+SELECT
+	*
+FROM
+	-- this gets us some more information and not just the count, also used incase there is more than one third place testcode.
+(	SELECT
+		COUNT(*) AS TestCount4,
+		DT.TESTCODE AS TestCode
+	FROM
+		DICTESTS DT,
+		TESTS T,
+		REQUESTS R,
+		DICFACILITIES DF,
+		PATIENTS P
+	WHERE
+		T.TESTID = DT.TESTID
+		AND R.REQUESTID = T.REQUESTID
+		AND DF.FACID = R.FACILITYID
+		AND R.PATIENTID = P.PATID
+	GROUP BY
+		DT.TESTCODE) AS MainTable4
+WHERE
+	MainTable4.TestCount4 = (
+	SELECT
+		MAX(MainTable3.TestCount3) AS ThirdHighestTest
+		-- gets the third highest test in the main table defined. Basically looping three times.
+	FROM 
+		(SELECT
+			COUNT(*) AS TestCount3,
+			DT.TESTCODE AS TestCode
+		FROM
+			DICTESTS DT,
+			TESTS T,
+			REQUESTS R,
+			DICFACILITIES DF,
+			PATIENTS P
+		WHERE
+			T.TESTID = DT.TESTID
+			AND R.REQUESTID = T.REQUESTID
+			AND DF.FACID = R.FACILITYID
+			AND R.PATIENTID = P.PATID
+		GROUP BY
+			DT.TESTCODE) AS MainTable3
+	WHERE
+		MainTable3.TestCount3 < (
+		SELECT
+			MAX(MainTable2.TestCount2) AS SecondHighestTest
+			-- gets the second highest test from MainTable defined again here where the max is not the highest
+		FROM 
+			(SELECT
+				COUNT(*) AS TestCount2,
+				DT.TESTCODE
+			FROM
+				DICTESTS DT,
+				TESTS T,
+				REQUESTS R,
+				DICFACILITIES DF,
+				PATIENTS P
+			WHERE
+				T.TESTID = DT.TESTID
+				AND R.REQUESTID = T.REQUESTID
+				AND DF.FACID = R.FACILITYID
+				AND R.PATIENTID = P.PATID
+			GROUP BY
+				DT.TESTCODE) AS MainTable2
+		WHERE
+			MainTable2.TestCount2 < 
+			(SELECT
+				MAX(MainTable.TestCount) AS HighestTest
+			FROM
+				-- gets the highest test count from the MainTable we have defined in
+				-- the sub query below
+				(SELECT
+					COUNT(*) AS TestCount,
+					DT.TESTCODE
+				FROM
+					DICTESTS DT,
+					TESTS T,
+					REQUESTS R,
+					DICFACILITIES DF,
+					PATIENTS P
+				WHERE
+					T.TESTID = DT.TESTID
+					AND R.REQUESTID = T.REQUESTID
+					AND DF.FACID = R.FACILITYID
+					AND R.PATIENTID = P.PATID
+				GROUP BY
+					DT.TESTCODE) AS MainTable
+				-- The main table that contains the total test done for each test code
+			)
+			-- end of highest count test count table
+		)
+		-- end of second highest test count in main table
+	)
+	-- end of third highest test count in main table
+;
 
+/*
+Question 4A
+Write a query which displays all lab requests. 
+You should include the number of tests in that request and the test which had the highest result. 
+*/
