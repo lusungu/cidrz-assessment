@@ -334,8 +334,94 @@ WHERE
 	-- end of third highest test count in main table
 ;
 
+-- Method two, recommended for code integration, also utilises subquery to find the nth highest testcount
+SELECT * -- main outer query
+FROM
+	(SELECT
+		COUNT(*) AS TestCount,
+		DT.TESTCODE
+	FROM
+		DICTESTS DT,
+		TESTS T,
+		REQUESTS R,
+		DICFACILITIES DF,
+		PATIENTS P
+	WHERE
+		T.TESTID = DT.TESTID
+		AND R.REQUESTID = T.REQUESTID
+		AND DF.FACID = R.FACILITYID
+		AND R.PATIENTID = P.PATID
+	GROUP BY
+		DT.TESTCODE) MainTble -- main table with the all the testcodes and their test counts
+WHERE (2) = ( -- Here 2 is take =n as the third highest testcount from formula (N-1) = being the nth highest test code
+		SELECT COUNT(DISTINCT(MainTble2.TestCount2)) -- count all 
+		FROM (SELECT
+				COUNT(*) AS TestCount2,
+				DT.TESTCODE
+			FROM
+				DICTESTS DT,
+				TESTS T,
+				REQUESTS R,
+				DICFACILITIES DF,
+				PATIENTS P
+			WHERE
+				T.TESTID = DT.TESTID
+				AND R.REQUESTID = T.REQUESTID
+				AND DF.FACID = R.FACILITYID
+				AND R.PATIENTID = P.PATID
+			GROUP BY
+				DT.TESTCODE) MainTble2
+		WHERE MainTble2.TestCount2 > MainTble.TestCount 
+		-- on the condition that testcount in this table is greater than the testcount 
+		-- passed from the first main table, if it is not then its not counted. 
+		-- in this case if the count is 2 then  
+)
+
 /*
 Question 4A
 Write a query which displays all lab requests. 
 You should include the number of tests in that request and the test which had the highest result. 
 */
+
+SELECT
+	r.REQUESTID AS "Request ID",
+	r.RECEIVEDDATE AS "Received Date",
+	r.ACCESSNO AS "Access No",
+	p.PATID AS "Patient ID",
+	count(*) AS "Tests",
+	HighestResultTble.TESTNAME AS "HighTest"
+FROM
+	REQUESTS r,
+	TESTS t,
+	PATIENTS p,
+	-- temp table query to fetch tests with the highest results
+	(SELECT
+		dt.TESTID,
+		dt.TESTNAME,
+		TestResTble.HighestRes
+	FROM
+		DICTESTS dt,
+		(SELECT
+			t.TESTID AS TestID,
+			max(t.RESULTVALUE) AS HighestRes
+		FROM
+			TESTS t
+		GROUP BY
+			t.TESTID) AS TestResTble
+			-- main test result table with the test and 
+			-- their corresponding highest test result values
+	WHERE
+		dt.TESTID IN (TestResTble.TestID) 
+		) AS HighestResultTble
+		-- this gets the details (testname, id and result) of each highest result value tests
+WHERE
+	t.REQUESTID = r.REQUESTID
+	AND p.PATID = r.PATIENTID
+	AND HighestResultTble.TESTID = t.TESTID
+	-- match temp table's testid with the main query testid
+	GROUP BY r.REQUESTID,
+	r.RECEIVEDDATE,
+	r.ACCESSNO,
+	p.PATID,
+	HighestResultTble.TESTNAME ;
+
