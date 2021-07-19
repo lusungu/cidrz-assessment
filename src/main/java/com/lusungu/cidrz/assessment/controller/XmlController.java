@@ -1,19 +1,19 @@
 package com.lusungu.cidrz.assessment.controller;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lusungu.cidrz.assessment.model.Tests;
+import com.lusungu.cidrz.assessment.response.GenericResponse;
+import com.lusungu.cidrz.assessment.response.TestResponses;
 import com.lusungu.cidrz.assessment.response.XmlTestResponse;
-import com.lusungu.cidrz.assessment.response.XmlTestResponseList;
 import com.lusungu.cidrz.assessment.service.TestsService;
 
 @RestController
@@ -24,13 +24,11 @@ public class XmlController {
 
 	@RequestMapping(path = "/request/{requestId}", produces = {MediaType.APPLICATION_XML_VALUE})
 	@ResponseBody
-	public XmlTestResponseList getTestRequest(@PathVariable(value = "requestId") int requestId) {
-		System.out.println("Received request to get request in xml");
+	public ResponseEntity<?> getTestRequest(@PathVariable(value = "requestId") int requestId) {
 		List<Tests> tests = testService.getTestByRequestId(requestId);
 		
-		XmlTestResponseList resps = new XmlTestResponseList();
+		TestResponses responses = new TestResponses();
 		
-		List<XmlTestResponse> responses = new ArrayList<XmlTestResponse>();
 		for (Tests test : tests) {
 			XmlTestResponse testDetail = new XmlTestResponse();
 			testDetail.setDoctorName(test.getRequests().getDicDoctors().getDocName());
@@ -40,11 +38,12 @@ public class XmlController {
 			testDetail.setTestName(test.getDicTests().getTestName());
 			testDetail.setTestValue(test.getResultValue());
 			
-			resps.getTestDetails().add(testDetail);
-			
-			responses.add(testDetail);
-		}		
-		return resps;		
+			responses.getTestDetails().add(testDetail);
+		}
+		if (responses.getTestDetails().isEmpty()) {
+			return ResponseEntity.ok().body(new GenericResponse("Data not found for the given request id"));	
+		}
+		return ResponseEntity.ok().body(responses);		
 	}
 	
 	@RequestMapping(path = "/test/{testId}",  produces = {MediaType.APPLICATION_XML_VALUE})

@@ -39,13 +39,14 @@ public class DicFacilitiesService {
 	}
 	
 	// save one facility
-	public void saveFacility(DicFacilities facility) {
+	public DicFacilities saveFacility(DicFacilities facility) {
 		String facCode = facility.getFacCode();
 		if (existsByFacCode(facCode)) {
 			throw new AlreadyExistException("Facility with Facility code "+facCode+" already exists");
 		}
 		DicFacilities fac = repo.save(facility);
 		log.info("Facility saved! {}", fac);
+		return fac;
 	}
 	
 	// update

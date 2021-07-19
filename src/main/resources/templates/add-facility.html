@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+	<title>CIDRZ Assessment</title>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-xl-6 col-lg-5 col-md-6">
+				<div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <div class="row m-3">                            
+                            <div class="col-lg-12 ">
+                            
+                            	<!-- alert if anything -->
+                            	<div id="message" class="alert alert-info" style="display:none"></div>
+                            	
+                            	<form th:action="@{/webapp/dic-facilities}" id="facilityForm" th:object="${facility}" 
+                            		method="post"  enctype="multipart/form-data" > <!-- --> 
+                            		
+								    <div>								    
+								    	<!-- Facility code -->
+								    	<div class="form-group">
+								    		<label for="facCode" class="form-label">Facility code</label>
+								    		<input type="text" id="facCode" name="facCode" th:field="*{facCode}" class="form-control" required="required"/> <br/>
+								    	</div>
+								    	
+								    	<!-- Facility name -->
+								    	<div class="form-group" >
+									    	<label for="facName" class="form-label">Facility name</label>
+									    	<input type="text" id="facName" th:field="*{facName}" name="facName" class="form-control"  required="required"/> <br/>
+								     	</div>
+								     	
+								     	<!-- Facility image -->
+								     	<div class="form-group">
+										    <label for="image" class="form-label">Facility Image </label>
+										    <input type="file" name="fImage" id="fImage" th:field="*{fImage}" class="form-control"  accept="image/png, image/jpeg" /> <br/>
+									    </div>
+									    
+									    <!-- Image Preview -->
+								     	<div class="form-group mb-2 rounded">
+										    <img id="thumbnail" width="250" height="250" alt="image preview" src="">
+									    </div>
+									    
+									    <div class="form-group justify-content-center">
+										    <button type="submit" class="ml-4 mb-2 btn btn-primary">Submit</button>
+									    </div>								     	
+								    </div>
+								</form>
+								
+                            </div>
+                        </div>
+                    </div>
+                 </div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#fImage').change(function(){
+				showImageThumnail(this);
+			});
+		});
+		
+		function showImageThumnail(fileInput){
+			file = fileInput.files[0];
+			reader = new FileReader();
+			
+			reader.onload = function(e){
+				$('#thumbnail').attr('src', e.target.result);
+			};
+			reader.readAsDataURL(file);
+		}
+		
+		$('#facilityForm').on('submit', function(e){
+			e.preventDefault();
+			var formData = new FormData(document.getElementById('facilityForm'));
+			
+	        $.ajax({
+	            type: 'POST',
+	            url: '/json/dic-facilities',
+	            data: formData,
+	            contentType: false,
+	            processData: false,
+	            success: function(response) {
+                console.log('success', response);
+              },
+              error: function(response) {
+                console.log('error', response);
+              }
+	        }).fail(function(jqXHR, textStatus, errorThrown){
+	            if(jqXHR.status == 0){
+	            	console.log("Could be a  connection issue: "+jqXHR)
+	                //Here I would notify user if connection is down and save the data in temporary storage
+	            	$("#message").show().html("Failed. Could be a connection issue, form will be uploaded once connection is established");
+	            }else{
+	            	console.log("Error: "+jqXHR);
+	            }
+	        });
+	    	}
+		);
+		
+	</script>
+
+</body>
+</html>

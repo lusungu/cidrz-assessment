@@ -8,10 +8,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
 
-@XmlRootElement(name="TestResponses")
+
 @Getter
 @Setter
-public class XmlTestResponseList {
+@XmlRootElement(name="TestResponses")
+public class TestResponses {
 
 	private List<XmlTestResponse> testDetails = new ArrayList<XmlTestResponse>();
 }
