@@ -126,10 +126,8 @@ FROM
 GROUP BY
 	TestAmountTble.TestCode ;
 
-/*
-Question 3A
-Write a query which displays the 3rd most popular test at the lab. 
-*/
+
+-- Question 3A
 SELECT
 	*
 FROM
@@ -226,7 +224,8 @@ WHERE
 	-- end of third highest test count in main table
 ;
 
--- Method two, recommended for code integration, also utilises subquery to find the nth highest testcount
+-- Question 3A
+-- Method two
 SELECT * -- main outer query
 FROM
 	(SELECT
@@ -268,51 +267,44 @@ WHERE (2) = (
 		WHERE MainTble2.TestCount2 > MainTble.TestCount  
 );
 
-/*
-Question 4A
-Write a query which displays all lab requests. 
-You should include the number of tests in that request and the test which had the highest result. 
-*/
 
+-- Question 4A
 SELECT
-	r.REQUESTID AS "Request ID",
-	r.RECEIVEDDATE AS "Received Date",
-	r.ACCESSNO AS "Access No",
-	p.PATID AS "Patient ID",
+	r.requestId AS "Request ID",
+	format(r.receivedDate, 'dd-MMM-yyyy') AS "Received Date",
+	r.accessNo AS "Access No",
+	p.patId AS "Patient ID",
 	count(*) AS "Tests",
-	HighestResultTble.TESTNAME AS "HighTest"
+	HighestResultTble.testName AS "HighTest"
 FROM
-	REQUESTS r,
-	TESTS t,
-	PATIENTS p,
+	Requests r,
+	Tests t,
+	Patients p,
 	-- temp table query to fetch tests with the highest results
 	(SELECT
-		dt.TESTID,
-		dt.TESTNAME,
+		dt.testId,
+		dt.testName,
 		TestResTble.HighestRes
 	FROM
-		DICTESTS dt,
+		DicTests dt,
 		(SELECT
-			t.TESTID AS TestID,
-			max(t.RESULTVALUE) AS HighestRes
+			t.testId AS TestID,
+			max(t.resultValue) AS HighestRes
 		FROM
-			TESTS t
+			Tests t
 		GROUP BY
-			t.TESTID) AS TestResTble
-			-- main test result table with the test and 
-			-- their corresponding highest test result values
-	WHERE
-		dt.TESTID IN (TestResTble.TestID) 
-		) AS HighestResultTble
+			t.testId) AS TestResTble
+		-- main test result table with the test and 
+		-- their corresponding highest test result values
+		WHERE dt.testId IN (TestResTble.TestID)) AS HighestResultTble
 		-- this gets the details (testname, id and result) of each highest result value tests
-WHERE
-	t.REQUESTID = r.REQUESTID
-	AND p.PATID = r.PATIENTID
-	AND HighestResultTble.TESTID = t.TESTID
-	-- match temp table's testid with the main query testid
-	GROUP BY r.REQUESTID,
-	r.RECEIVEDDATE,
-	r.ACCESSNO,
-	p.PATID,
-	HighestResultTble.TESTNAME ;
-
+WHERE 
+	t.requestId = r.requestId
+	AND p.patId = r.patId
+	AND HighestResultTble.testId = t.testId
+GROUP BY 
+	r.requestId,
+	r.receivedDate,
+	r.accessNo,
+	p.patId,
+	HighestResultTble.testName;

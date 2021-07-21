@@ -56,12 +56,25 @@ public class AppRestController {
 	@Value(value = "${file.upload-dir}")
 	private String uploadDir;
 
+	/**
+	 * 
+	 * @param dicFac
+	 * @return
+	 * 
+	 * Adds dic-facility with no image 
+	 */
 	@PostMapping("/dic-facilities")
 	public GenericResponse addDicFacility(@RequestBody DicFacilities dicFac) {
 		dicFacService.saveFacility(dicFac);
 		return new GenericResponse("success");
 	}
 	
+	/**
+	 * Adds new DicFacility with image 
+	 * @param dicFacility
+	 * @return
+	 * @throws IOException
+	 */
 	@PostMapping(path = "/json/dic-facilities", consumes = {"multipart/form-data"})
     public GenericResponse saveDicFacility(@ModelAttribute DicFacilities dicFacility) throws IOException {
 		
@@ -73,8 +86,6 @@ public class AppRestController {
 		String extension = fileFrags[fileFrags.length - 1];
          
         String fileName = dicFacility.getFacCode()+"-image."+extension;
-        //StringUtils.cleanPath(dicFacility.getFImage().getOriginalFilename()); 
-        //StringUtils.cleanPath(multipartFile.getOriginalFilename());
         dicFacility.setFacImage(fileName);
         DicFacilities fac = dicFacService.saveFacility(dicFacility);
  

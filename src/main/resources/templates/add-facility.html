@@ -104,8 +104,9 @@
               }
 	        }).fail(function(jqXHR, textStatus, errorThrown){
 	            if(jqXHR.status == 0){
-	            	//console.log("Could be a  connection issue: "+jqXHR)
+	            	
 	                //Here I would notify user if connection is down and save the data in temporary storage
+	                
 	            	$("#message").show().html("Failed. Could be a connection issue, form will be uploaded once connection is established");
 	            }else{
 	            	console.log("Error: "+jqXHR);

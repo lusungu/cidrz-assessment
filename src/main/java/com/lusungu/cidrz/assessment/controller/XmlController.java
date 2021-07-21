@@ -20,9 +20,9 @@ import com.lusungu.cidrz.assessment.service.DicDoctorsService;
 import com.lusungu.cidrz.assessment.service.TestsService;
 
 /**
- * 
+ * XML controller, consumes JSON and produces XML response document.
  * @author lchihana
- * rest controller that handles requests coming via json and produces and responds with a xml document.
+ * 
  */
 @RestController
 public class XmlController {
@@ -35,7 +35,7 @@ public class XmlController {
 
 	/** 
 	 * @param requestId
-	 * @return list of test results represented in {@code XmlTestResponse} class
+	 * @return list of test results {@code XmlTestResponse}
 	 */
 	@RequestMapping(path = "/request/{requestId}", produces = {MediaType.APPLICATION_XML_VALUE})
 	@ResponseBody

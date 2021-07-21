@@ -44,6 +44,13 @@ public class AppController {
 		return "add-facility";
 	}
 	
+	/**
+	 * Add Dic Facility using web form, accepts multipart file.
+	 * @param dicFacility
+	 * @param multipartFile
+	 * @return
+	 * @throws IOException
+	 */
 	@PostMapping("/webapp/dic-facilities")
     public ModelAndView saveUser(DicFacilities dicFacility,
             @RequestParam("fImage") MultipartFile multipartFile) throws IOException {

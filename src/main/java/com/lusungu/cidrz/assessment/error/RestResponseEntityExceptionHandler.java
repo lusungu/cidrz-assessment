@@ -37,7 +37,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 	
-	// Not found exception
 	@ExceptionHandler({ NotFoundException.class })
 	public ResponseEntity<Object> handlDoesNotExist(final RuntimeException ex, final WebRequest request) {
 		logger.error("404 Status Code", ex.getCause());
@@ -45,7 +44,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
 
-	// Something already exist
 	@ExceptionHandler({ AlreadyExistException.class })
 	public ResponseEntity<Object> handlAlreadyExist(final RuntimeException ex, final WebRequest request) {
 		logger.error("409 Status Code", ex.getCause());
