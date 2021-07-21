@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,7 +29,7 @@ public class AppController {
 	@Value(value = "${file.upload-dir}")
 	private String uploadDir;
 	
-	@RequestMapping(path = "/webapp/facilities", method = RequestMethod.GET)
+	@GetMapping("/webapp/facilities")
 	public String getIndexPage(final Model model, @Param("message") String message) {
 		List<DicFacilities> facs = dicFacService.getDicFacilities();
 		model.addAttribute("message" , message);

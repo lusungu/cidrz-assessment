@@ -21,7 +21,7 @@
                             <div class="col-lg-12 ">
                             
                             	<!-- alert if anything -->
-                            	<div id="message" class="alert alert-info" style="display:none"></div>
+                            	<div id="message" class="alert alert-danger" style="display:none"></div>
                             	
                             	<form th:action="@{/webapp/dic-facilities}" id="facilityForm" th:object="${facility}" 
                             		method="post"  enctype="multipart/form-data" > <!-- --> 
@@ -97,11 +97,10 @@
 	            contentType: false,
 	            processData: false,
 	            success: function(response) {
-	            	$("#message").show().html("Facility saved!");
-	            	window.location.href = serverContext + "webapp/facilities?message=success";
+	            	window.location.href = "/webapp/facilities?message=success";
               },
               error: function(response) {
-                console.log('error', response);
+            	  $("#message").show().html(response.responseJSON.message);
               }
 	        }).fail(function(jqXHR, textStatus, errorThrown){
 	            if(jqXHR.status == 0){
