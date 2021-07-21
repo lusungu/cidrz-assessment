@@ -18,7 +18,7 @@ FROM
 		AND r.patId = p.patId
 	GROUP BY
 		dt.testCode) MainTble -- main table with the all the testcodes and their test counts
-WHERE (1) = ( 
+WHERE (2) = ( 
 -- 2 = third highest testcount from formula (N-1) = being the nth highest test code
 -- any record with a count = 2 has 2 records higher than it so it is the third highest.
 		SELECT COUNT(DISTINCT(MainTble2.TestCount2)) -- count all 
