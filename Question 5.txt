@@ -1,4 +1,3 @@
-#Question 5 solution
 ^XA^CFD
 ^CFD,20^FS
 ^FO100,100^GB500,500,10^FS
