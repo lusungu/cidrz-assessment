@@ -31,7 +31,7 @@ So, if you want to see details for `requestId=1` then go to\
 [http://localhost:8080/request/1](http://localhost:8080/request/1)
 This will output the results in a valid XML format as;
 
-``
+```
 	<RequestDetail>
 		<patientName>MULENGA CHIBWE</patientName>
 		<testName>HIV Aliqote</testName>
@@ -39,7 +39,7 @@ This will output the results in a valid XML format as;
 		<facilityName>TB-CHILENJE</facilityName>
 		<resultValue>66</resultValue>
 	</RequestDetail>
-``
+```
 
 ### Question 3
 I opted for web application\
