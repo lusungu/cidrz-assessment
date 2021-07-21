@@ -42,7 +42,8 @@
 								     	<!-- Facility image -->
 								     	<div class="form-group">
 										    <label for="image" class="form-label">Facility Image </label>
-										    <input type="file" name="fImage" id="fImage" th:field="*{fImage}" class="form-control"  accept="image/png, image/jpeg" /> <br/>
+										    <input type="file" name="fImage" id="fImage" th:field="*{fImage}" class="form-control"  
+										    accept="image/*;capture=environment" /> <br/>
 									    </div>
 									    
 									    <!-- Image Preview -->
@@ -65,6 +66,10 @@
 	</div>
 
 	<script type="text/javascript">
+		var base_url = window.location.origin;
+		var host = window.location.host;
+		var serverContext = window.location.pathname.split( '/' );
+	
 		$(document).ready(function(){
 			$('#fImage').change(function(){
 				showImageThumnail(this);
@@ -92,14 +97,15 @@
 	            contentType: false,
 	            processData: false,
 	            success: function(response) {
-                console.log('success', response);
+	            	$("#message").show().html("Facility saved!");
+	            	window.location.href = serverContext + "webapp/facilities?message=success";
               },
               error: function(response) {
                 console.log('error', response);
               }
 	        }).fail(function(jqXHR, textStatus, errorThrown){
 	            if(jqXHR.status == 0){
-	            	console.log("Could be a  connection issue: "+jqXHR)
+	            	//console.log("Could be a  connection issue: "+jqXHR)
 	                //Here I would notify user if connection is down and save the data in temporary storage
 	            	$("#message").show().html("Failed. Could be a connection issue, form will be uploaded once connection is established");
 	            }else{

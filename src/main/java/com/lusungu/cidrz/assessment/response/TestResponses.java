@@ -3,7 +3,8 @@ package com.lusungu.cidrz.assessment.response;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +12,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@XmlRootElement(name="TestResponses")
+@JacksonXmlRootElement(localName = "RequestDetails")
 public class TestResponses {
-
-	private List<XmlTestResponse> testDetails = new ArrayList<XmlTestResponse>();
+	
+	@JacksonXmlProperty(localName = "TestDetails")
+	private List<XmlTestResponseDto> testDetails = new ArrayList<XmlTestResponseDto>();
 }

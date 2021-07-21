@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title >Facilities</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    
+    <!-- data tables -->
+    <link rel="stylesheet" type="text/css" th:href="@{/js/DataTables/datatables.min.css}"/>
+
+  </head>
+<body >
+
+<!-- Main body -->
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+    	
+      <div class="col-lg-8 col-md-10" >
+       	
+       	<div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+  			[[${error}]]
+  			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    <i class="fa fa-times"></i>
+			</button>
+		</div>
+        
+        <!-- Message -->
+        <div th:if="${message != null}" class="alert alert-primary alert-dismissible fade show" role="alert">
+  			[[${message}]]
+  			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			    <i class="fa fa-times"></i>
+			</button>
+		</div>
+        
+        <div th:switch="${facilities}" >
+			<h5 th:if="${#lists.size(facilities) <= 0 }">No facilities yet!</h5>
+			<p><a th:href="@{/webapp/facility}" class="btn btn-primary"><i class="fas fa-plus-square"></i>  Add Facility</a></p>
+													
+			<div th:case="*" class="adv-table pb-4" th:if="${#lists.size(facilities) > 0 }">
+				<table  class="display table table-sm table-bordered table-striped" id="facTable">
+					<thead>
+                        <tr>
+		                    <th>Facility Code</th>
+	           				<th>Facility Name</th>
+	               		</tr>						                               
+					</thead>
+					<tbody>
+                       <tr th:each="fac : ${facilities}" >
+		                    <td th:text="${fac.facCode}"></td>
+		        			<td th:text="${fac.facName}"></td>
+	                	</tr>
+                    </tbody>
+				</table>
+				</div>        
+      		</div>
+  		</div>
+  	</div>
+  </div>
+
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap/bootstrap.min.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/js/DataTables/datatables.min.js}"></script>
+    
+    <script th:inline="javascript">
+    	
+   		$(document).ready( function () {
+   		    $('#facTable').DataTable();
+   		} );
+   		
+   		window.setTimeout(function() {
+   		  $(".alert").fadeTo(500, 0).slideUp(500, function(){
+   		    $(this).remove(); 
+   		  });
+   		}, 5000);
+    </script>
+
+</body>
+</html>

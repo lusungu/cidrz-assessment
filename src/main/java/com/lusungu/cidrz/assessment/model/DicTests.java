@@ -2,6 +2,7 @@ package com.lusungu.cidrz.assessment.model;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class DicTests {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int testId;
 	
+	@Column(unique = true)
 	private String testCode;
 	private String testName;
 	private int testPrice;

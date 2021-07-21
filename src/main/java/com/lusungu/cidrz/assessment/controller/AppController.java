@@ -1,6 +1,7 @@
 package com.lusungu.cidrz.assessment.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,9 +30,19 @@ public class AppController {
 	@Value(value = "${file.upload-dir}")
 	private String uploadDir;
 	
-	@RequestMapping(path = "/index", method = RequestMethod.GET)
-	public String getIndexPage(final Model model) {
-		return "index";
+	@RequestMapping(path = "/webapp/facilities", method = RequestMethod.GET)
+	public String getIndexPage(final Model model, @Param("message") String message) {
+		List<DicFacilities> facs = dicFacService.getDicFacilities();
+		model.addAttribute("message" , message);
+		model.addAttribute("facilities" , facs);
+		return "facilities";
+	}
+	
+	@RequestMapping(path = "/webapp/facility")
+	public String getFacility(final Model model) {
+		DicFacilities fac = new DicFacilities();
+		model.addAttribute("facility", fac);
+		return "add-facility";
 	}
 	
 	@PostMapping("/webapp/dic-facilities")
@@ -48,13 +59,6 @@ public class AppController {
          
         return new ModelAndView("redirect:/webapp/facility-detail?facId="+fac.getFacId());
     }
-	
-	@RequestMapping(path = "/webapp/dic" )
-	public String getFacility(final Model model) {
-		DicFacilities fac = new DicFacilities();
-		model.addAttribute("facility", fac);
-		return "add-facility";
-	}
 	
 	@GetMapping(path = "/webapp/facility-detail")
 	public String getFacility(@Param("facId") int facId, final Model model) {

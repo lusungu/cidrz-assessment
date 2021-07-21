@@ -3,6 +3,8 @@ package com.lusungu.cidrz.assessment.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,8 @@ import com.lusungu.cidrz.assessment.util.FileUploadUtil;
 
 @RestController
 public class AppRestController {
+	
+	private final Logger log = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	private DicFacilitiesService dicFacService;
@@ -59,11 +63,16 @@ public class AppRestController {
 	}
 	
 	@PostMapping(path = "/json/dic-facilities", consumes = {"multipart/form-data"})
-    public ResponseEntity<GenericResponse> saveDicFacility(@ModelAttribute DicFacilities dicFacility) throws IOException {
+    public GenericResponse saveDicFacility(@ModelAttribute DicFacilities dicFacility) throws IOException {
+		
+		log.info("Adding dic facility using json..");
 		
 		MultipartFile multipartFile = dicFacility.getFImage();
+		
+		String[] fileFrags = multipartFile.getOriginalFilename().split("\\.");
+		String extension = fileFrags[fileFrags.length - 1];
          
-        String fileName = dicFacility.getFacCode()+"-image";
+        String fileName = dicFacility.getFacCode()+"-image."+extension;
         //StringUtils.cleanPath(dicFacility.getFImage().getOriginalFilename()); 
         //StringUtils.cleanPath(multipartFile.getOriginalFilename());
         dicFacility.setFacImage(fileName);
@@ -73,7 +82,7 @@ public class AppRestController {
  
         FileUploadUtil.saveFile(dir, fileName, multipartFile);
          
-        return ResponseEntity.ok().body(new GenericResponse("success"));	 // new GenericResponse("success");
+        return new GenericResponse("success");
     }
 	
 	@PostMapping("/dic-doctors")
@@ -113,6 +122,14 @@ public class AppRestController {
 	public GenericResponse addTests(@RequestBody Tests test) {
 		testService.save(test);
 		return new GenericResponse("success");
+	}
+	
+	// get information
+	
+	@GetMapping("/dic-doctors")
+	public ResponseEntity<List<DicDoctors>> getDicDoctors(){
+		List<DicDoctors> response = dicDoctorsService.getDicDoctors();
+		return ResponseEntity.ok().body(response);
 	}
 	
 }
